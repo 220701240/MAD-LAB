@@ -1,0 +1,49 @@
+package com.example.emailsender
+
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var editTextTo: EditText
+    private lateinit var editTextSubject: EditText
+    private lateinit var editTextMessage: EditText
+    private lateinit var buttonSend: Button
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        editTextTo = findViewById(R.id.editTextTo)
+        editTextSubject = findViewById(R.id.editTextSubject)
+        editTextMessage = findViewById(R.id.editTextMessage)
+        buttonSend = findViewById(R.id.buttonSend)
+
+        buttonSend.setOnClickListener {
+            sendEmail()
+        }
+    }
+
+    private fun sendEmail() {
+        val recipient = editTextTo.text.toString().trim()
+        val subject = editTextSubject.text.toString().trim()
+        val message = editTextMessage.text.toString().trim()
+
+        if (recipient.isNotEmpty() && subject.isNotEmpty() && message.isNotEmpty()) {
+            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:")
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(recipient))
+                putExtra(Intent.EXTRA_SUBJECT, subject)
+                putExtra(Intent.EXTRA_TEXT, message)
+            }
+
+            if (intent.resolveActivity(packageManager) != null) {
+                startActivity(intent)
+            }
+        }
+    }
+}
